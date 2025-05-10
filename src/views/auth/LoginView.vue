@@ -17,8 +17,8 @@ const { mobile } = useDisplay()
               <v-card-title class="text-center">
                 <v-img
                   class="mx-auto"
-                  src="/images/logo-shop.png"
-                  :width="mobile ? '75%' : '65%'"
+                  src="/images/logo.png"
+                  :width="mobile ? '75%' : '50%'"
                 ></v-img>
 
                 <h3 class="font-weight-black mt-5">Welcome to Petagram</h3>
@@ -31,9 +31,9 @@ const { mobile } = useDisplay()
 
                 <v-divider class="my-5"></v-divider>
 
-                <h4 class="text-center" v-if="false">
+                <h4 class="text-center">
                   Don't have account?
-                  <RouterLink class="text-red-darken-4 font-weight-black" to="/register">
+                  <RouterLink class="text-light-green-darken-3 font-weight-black" to="/register">
                     Click here to Register
                   </RouterLink>
                 </h4>
@@ -45,5 +45,4 @@ const { mobile } = useDisplay()
     </template>
   </AppLayout>
 </template>
-
 <style scoped></style>

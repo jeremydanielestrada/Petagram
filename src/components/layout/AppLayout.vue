@@ -33,9 +33,13 @@ onMounted(() => {
 <template>
   <v-responsive>
     <v-app :theme="theme">
-      <v-app-bar class="px-3" :color="theme === 'light' ? 'red-lighten-2' : 'red-darken-4'" border>
+      <v-app-bar
+        class="px-3"
+        :color="theme === 'light' ? 'light-green-lighten-3' : 'light-green-darken-3'"
+        border
+      >
         <v-app-bar-title>
-          <v-img src="/images/logo-shop.png" :width="xs ? '100%' : sm ? '40%' : '14%'"></v-img>
+          <v-img src="/images/logo.png" width="60"></v-img>
         </v-app-bar-title>
 
         <v-spacer></v-spacer>
@@ -57,7 +61,7 @@ onMounted(() => {
 
       <v-footer
         class="font-weight-bold"
-        :color="theme === 'light' ? 'red-lighten-2' : 'red-darken-4'"
+        :color="theme === 'light' ? 'light-green-lighten-3' : 'light-green-darken-3'"
         border
         app
       >

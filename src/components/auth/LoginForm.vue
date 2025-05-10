@@ -41,7 +41,7 @@ const isPasswordVisible = ref(false)
     <v-btn
       class="mt-2"
       type="submit"
-      color="red-darken-4"
+      color="light-green-darken-3"
       prepend-icon="mdi-login"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
