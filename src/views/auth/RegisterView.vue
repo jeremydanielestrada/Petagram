@@ -1,15 +1,15 @@
 <script setup>
+import RegisterForm from '@/components/auth/RegisterForm.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import LoginForm from '@/components/auth/LoginForm.vue'
 import { useDisplay } from 'vuetify'
-
+// Utilize pre-defined vue functions
 const { mobile } = useDisplay()
 </script>
 
 <template>
   <AppLayout>
     <template #content>
-      <v-container fluid>
+      <v-container class="pa-0" fluid>
         <v-row>
           <v-col cols="12" lg="8" class="bg-surface-light h-screen" v-if="!mobile"></v-col>
           <v-col cols="12" lg="4" :class="mobile ? '' : 'pt-16'">
@@ -21,20 +21,20 @@ const { mobile } = useDisplay()
                   :width="mobile ? '75%' : '65%'"
                 ></v-img>
 
-                <h3 class="font-weight-black mt-5">Welcome to Petagram</h3>
+                <h3 class="font-weight-black mt-5">Registration</h3>
               </v-card-title>
 
               <v-card-text class="pt-4">
                 <v-divider class="my-5"></v-divider>
 
-                <LoginForm></LoginForm>
+                <RegisterForm></RegisterForm>
 
                 <v-divider class="my-5"></v-divider>
 
-                <h4 class="text-center" v-if="false">
-                  Don't have account?
-                  <RouterLink class="text-red-darken-4 font-weight-black" to="/register">
-                    Click here to Register
+                <h4 class="text-center">
+                  Already have account?
+                  <RouterLink class="text-red-darken-4 font-weight-black" to="/">
+                    Click here to Login
                   </RouterLink>
                 </h4>
               </v-card-text>
@@ -45,5 +45,3 @@ const { mobile } = useDisplay()
     </template>
   </AppLayout>
 </template>
-
-<style scoped></style>
