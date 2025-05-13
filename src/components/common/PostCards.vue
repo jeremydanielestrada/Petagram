@@ -93,7 +93,7 @@ const handleToggleHeart = async (postId) => {
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      <v-img :src="post.image_url" width="100%" height="100%"></v-img>
+      <v-img :src="post.image_url" max-width="500" max-height="600" aspect-ratio="1" cover></v-img>
     </v-card-text>
     <v-card-actions>
       <v-btn
