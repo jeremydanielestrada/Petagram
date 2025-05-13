@@ -9,8 +9,16 @@ const selectedFile = ref(null)
 
 const dialog = ref(false)
 
-//Handle submission
+onMounted(async () => {
+  try {
+    await posts.fecthPosts()
+    console.log(posts.posts)
+  } catch {
+    console.log('Error fetching posts')
+  }
+})
 
+//Handle submission
 const handleSubmit = async () => {
   if (!selectedFile.value || !caption.value) {
     alert('Please select an image and write a caption')
@@ -31,11 +39,11 @@ const handleSubmit = async () => {
     selectedFile.value = null
     caption.value = ''
   }
-
-  onMounted(() => {
-    posts.fecthPosts()
-  })
 }
+
+// const closeDialog = computed(() => {
+//   return posts.posts.length > 0 ? dialog.value == true : dialog.value == false
+// })
 </script>
 <template>
   <div class="text-center pa-4">
@@ -63,12 +71,18 @@ const handleSubmit = async () => {
     </v-dialog>
   </div>
 
-  <v-card v-for="post in posts.posts" :key="post.id" max-width="500">
-    <v-card-title>
-      {{ post.caption }}
-    </v-card-title>
-    <v-card-text>
-      <v-img :src="post.image_url" width="100%"></v-img>
-    </v-card-text>
-  </v-card>
+  <v-container>
+    <v-row>
+      <v-col cols="12" md="12" class="d-flex jutify-center align-center flex-column">
+        <v-card v-for="post in posts.posts" :key="post.id" width="500" class="ma-5">
+          <v-card-title>
+            {{ post.caption }}
+          </v-card-title>
+          <v-card-text>
+            <v-img :src="post.image_url" width="100%" height="500"></v-img>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
