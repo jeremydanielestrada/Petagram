@@ -47,7 +47,7 @@ onMounted(() => {
         <v-btn
           class="me-2"
           :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          variant="elevated"
+          variant="plain"
           slim
           @click="onToggleTheme"
         ></v-btn>

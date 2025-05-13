@@ -6,17 +6,22 @@ export const usePostStore = defineStore('postStore', () => {
   // States
   const posts = ref([])
   const isLoading = ref(false)
+  const heartedPosts = ref([])
 
   // Fetch posts
-  async function fecthPosts() {
+  async function fetchPosts() {
     isLoading.value = true
     const { data, error } = await supabase.from('posts').select(`*, hearts(count), comments(count)`)
 
     if (error) {
       console.error('Error fetching posts:', error)
     } else {
-      console.log('Fetched posts:', data) // ✅ Add this for debugging
-      posts.value = data
+      console.log('Fetched posts:', data) // For debugging
+      // Ensure each post has a properly structured hearts property
+      posts.value = data.map((post) => ({
+        ...post,
+        hearts: post.hearts || [],
+      }))
     }
 
     isLoading.value = false
@@ -82,17 +87,75 @@ export const usePostStore = defineStore('postStore', () => {
       console.error('Error adding post:', error)
     } else {
       posts.value.unshift(data[0]) // Add the new post to the top of the list  await fetchPosts()
-      await fecthPosts()
+      await fetchPosts()
     }
 
     isLoading.value = false
   }
 
+  //fetching Hearts
+  async function hasHearted(postId) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const { data } = await supabase
+      .from('hearts')
+      .select('*')
+      .eq('post_id', postId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    return data !== null
+  }
+
+  async function loadHeartedPosts() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const { data } = await supabase.from('hearts').select('post_id').eq('user_id', user.id)
+
+    heartedPosts.value = data.map((h) => h.post_id)
+  }
+
+  ///toggleHearts
+  async function toggleHeart(postId) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    // Check if heart exists
+    const { data: existingHeart } = await supabase
+      .from('hearts')
+      .select('*')
+      .eq('post_id', postId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (existingHeart) {
+      // Remove the heart
+      await supabase.from('hearts').delete().eq('id', existingHeart.id)
+    } else {
+      // Add a new heart
+      await supabase.from('hearts').insert({
+        post_id: postId,
+        user_id: user.id,
+      })
+    }
+  }
+
+  ///Fetch comments
+
   return {
+    heartedPosts,
     posts,
     isLoading,
-    fecthPosts,
+    fetchPosts,
     uploadImage,
     addPost,
+    toggleHeart,
+    loadHeartedPosts,
+    hasHearted,
   }
 })
