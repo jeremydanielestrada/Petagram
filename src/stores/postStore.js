@@ -158,19 +158,62 @@ export const usePostStore = defineStore('postStore', () => {
 
     return Boolean(data) // Returns true if comment exists, false otherwise
   }
+
   //add comment
-  async function addComment(postId, content) {
+  // In your postStore.js
+  async function addComment({ post_id, content }) {
+    if (!post_id || !content) {
+      throw new Error('Post ID and content are required')
+    }
+
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser()
+    if (authError) throw new Error('Authentication error')
+    if (!user) throw new Error('User not authenticated')
 
-    await supabase.from('comments').insert({
-      post_id: postId,
-      user_id: user.id,
-      content: content,
-    })
+    try {
+      const { error } = await supabase.from('comments').insert({
+        post_id,
+        user_id: user.id,
+        content,
+      })
+
+      if (error) throw error
+
+      // Optionally refresh comments after adding
+      await this.fetchComments(post_id)
+    } catch (error) {
+      console.error('Error in addComment:', error)
+      throw new Error(`Failed to add comment: ${error.message}`)
+    }
   }
 
+  // In your postStore.js
+  // Alternative approach if you don't have a profiles table
+  async function fetchComments(postId) {
+    try {
+      const { data: comments, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      // Update store
+      const postIndex = this.posts.findIndex((p) => p.id === postId)
+      if (postIndex !== -1) {
+        this.posts[postIndex].comments = comments
+      }
+
+      return comments
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+      throw error
+    }
+  }
   return {
     heartedPosts,
     posts,
@@ -183,5 +226,6 @@ export const usePostStore = defineStore('postStore', () => {
     hasHearted,
     hasCommented,
     addComment,
+    fetchComments,
   }
 })
