@@ -146,6 +146,30 @@ export const usePostStore = defineStore('postStore', () => {
   }
 
   ///Fetch comments
+  async function hasCommented(postId, userId) {
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .eq('post_id', postId)
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (error) throw new Error('Error checking for comments')
+
+    return Boolean(data) // Returns true if comment exists, false otherwise
+  }
+  //add comment
+  async function addComment(postId, content) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    await supabase.from('comments').insert({
+      post_id: postId,
+      user_id: user.id,
+      content: content,
+    })
+  }
 
   return {
     heartedPosts,
@@ -157,5 +181,7 @@ export const usePostStore = defineStore('postStore', () => {
     toggleHeart,
     loadHeartedPosts,
     hasHearted,
+    hasCommented,
+    addComment,
   }
 })
