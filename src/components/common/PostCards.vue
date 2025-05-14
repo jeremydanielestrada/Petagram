@@ -181,7 +181,7 @@ const handleComment = async () => {
         </v-btn>
 
         <v-dialog v-model="dialog" width="auto">
-          <v-card width="400">
+          <v-card :width="mobile ? 350 : 500">
             <v-card-title>Comments</v-card-title>
 
             <!-- Comments list -->
