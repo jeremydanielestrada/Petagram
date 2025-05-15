@@ -13,8 +13,9 @@ const input = ref('')
 
 const selectedPost = ref(null)
 const comments = ref([])
-
 const dialog = ref(false)
+
+const currentUserId = ref(null)
 
 onMounted(async () => {
   await postStore.loadHeartedPosts()
@@ -24,6 +25,12 @@ onMounted(async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  if (user) {
+    currentUserId.value = user.id
+  } else {
+    console.error('Error fetching user:', error)
+  }
 
   if (user && postStore.posts.length > 0) {
     // Option A: Check for all posts at once (more efficient)
@@ -66,7 +73,7 @@ const handleSubmit = async () => {
   }
 
   //First upload the image
-  const imageUrl = await posts.uploadImage(selectedFile.value)
+  const imageUrl = await postStore.uploadImage(selectedFile.value)
 
   if (imageUrl) {
     // If upload successful, create the post
@@ -111,6 +118,16 @@ const handleComment = async () => {
     alert('Failed to add comment')
   }
 }
+
+const handleDelete = async (postId) => {
+  try {
+    await postStore.deletePost(postId)
+    await postStore.fetchPosts()
+    alert('Succesfully delete post')
+  } catch {
+    console.log('Error deleting post')
+  }
+}
 </script>
 <template>
   <div class="text-center pa-4">
@@ -150,6 +167,15 @@ const handleComment = async () => {
   <v-card v-for="post in postStore.posts" :key="post.id" max-width="500" class="ma-5">
     <v-card-title>
       {{ post.caption }}
+      <v-btn
+        icon
+        variant="plain"
+        color="red"
+        v-if="currentUserId === post.user_id"
+        @click="handleDelete(post.id)"
+      >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>

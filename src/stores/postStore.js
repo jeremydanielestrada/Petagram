@@ -214,6 +214,36 @@ export const usePostStore = defineStore('postStore', () => {
       throw error
     }
   }
+
+  ///Delet a post
+  async function deletePost(postId) {
+    // 1. Delete related hearts
+    const { error: heartsError } = await supabase.from('hearts').delete().eq('post_id', postId)
+
+    if (heartsError) {
+      console.error('Error deleting hearts:', heartsError)
+      throw heartsError
+    }
+
+    // 2. Delete related comments
+    const { error: commentsError } = await supabase.from('comments').delete().eq('post_id', postId)
+
+    if (commentsError) {
+      console.error('Error deleting comments:', commentsError)
+      throw commentsError
+    }
+
+    // 3. Delete the post itself
+    const { error: postError } = await supabase.from('posts').delete().eq('id', postId)
+
+    if (postError) {
+      console.error('Error deleting post:', postError)
+      throw postError
+    }
+
+    console.log(`Post ${postId} and all related data deleted.`)
+  }
+
   return {
     heartedPosts,
     posts,
@@ -227,5 +257,6 @@ export const usePostStore = defineStore('postStore', () => {
     hasCommented,
     addComment,
     fetchComments,
+    deletePost,
   }
 })
